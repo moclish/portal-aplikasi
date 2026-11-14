@@ -1,11 +1,11 @@
-export type UnitType = 'Semua' | 'MTs' | 'MA';
+export type UnitType = 'Semua' | 'MTs' | 'MA' | 'Pondok';
 
 export interface AppLink {
   id: string;
   title: string;
   shortName: string;
-  unit: 'MTs' | 'MA';
-  category: 'RDM' | 'E-Learning' | 'CBT';
+  unit: 'MTs' | 'MA' | 'Pondok';
+  category: 'RDM' | 'E-Learning' | 'CBT' | 'Pondok';
   description: string;
   url: string;
   iconName: string;

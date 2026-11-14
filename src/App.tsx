@@ -88,18 +88,21 @@ export default function App() {
         />
 
         {/* Content Area */}
-        <main className="flex-1 mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8">
+        <main className="flex-1 mx-auto max-w-6xl xl:max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           {/* Clean Hero */}
           <HeroSection
             selectedUnit={selectedUnit}
             onSelectUnit={setSelectedUnit}
           />
 
-          {/* Apps Cards Container (Centered) */}
+          {/* Apps Cards Container (Centered: 4 Desktop, 3 Laptop, 2 Tablet, 1 Mobile) */}
           <section id="apps-section" className="my-8 scroll-mt-20 sm:scroll-mt-24">
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {filteredApps.map((app) => (
-                <div key={app.id} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] flex">
+                <div
+                  key={app.id}
+                  className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.3333%-16px)] xl:w-[calc(25%-18px)] flex"
+                >
                   <AppCard app={app} />
                 </div>
               ))}

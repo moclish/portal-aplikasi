@@ -88,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-all duration-300">
-      <div className="mx-auto max-w-6xl px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2.5 sm:gap-4">
+      <div className="mx-auto max-w-6xl xl:max-w-7xl px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2.5 sm:gap-4">
         {/* Brand Info (Left) - Clickable Link to Home */}
         <a
           href="#"

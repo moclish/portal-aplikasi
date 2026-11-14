@@ -6,7 +6,7 @@ export const Footer: React.FC = () => {
 
   return (
     <footer className="w-full text-xs text-slate-500 dark:text-slate-300">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Clean Divider Line between Tutorial and Footer */}
         <div className="w-full border-t border-slate-200/90 dark:border-slate-800" />
 

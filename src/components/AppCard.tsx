@@ -102,9 +102,9 @@ export const AppCard: React.FC<AppCardProps> = ({ app }) => {
 
   return (
     <div
-      className={`w-full flex-1 group relative flex flex-col justify-between rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/50 dark:shadow-md dark:shadow-black/40 transition-all duration-300 hover:-translate-y-1.5 overflow-hidden ${styles.cardHover}`}
+      className={`w-full flex-1 group relative flex flex-col justify-between rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/50 dark:shadow-lg dark:shadow-black/35 transition-all duration-300 hover:-translate-y-1.5 overflow-hidden ${styles.cardHover}`}
     >
-      {/* Top accent color bar - Green for MTs, Blue for MA, Amber/Gold for Pondok */}
+      {/* Top accent color bar - Green for MTs, Blue for MA, Violet for Pondok */}
       <div className={`absolute top-0 left-0 right-0 h-1.5 ${styles.topBar}`} />
 
       {/* Top Section */}
@@ -112,7 +112,7 @@ export const AppCard: React.FC<AppCardProps> = ({ app }) => {
         <div className="flex items-center justify-between gap-3 mb-4">
           {/* Stylized Solid Icon Container with High-Contrast Dark Mode Styling */}
           <div
-            className={`flex h-12 w-12 sm:h-13 sm:w-13 items-center justify-center rounded-2xl border shadow-xs transition-all duration-300 group-hover:shadow-md ${styles.iconContainer}`}
+            className={`flex h-12 w-12 items-center justify-center rounded-2xl border shadow-xs transition-all duration-300 group-hover:shadow-md ${styles.iconContainer}`}
           >
             {renderIcon()}
           </div>
@@ -133,19 +133,19 @@ export const AppCard: React.FC<AppCardProps> = ({ app }) => {
           {app.title}
         </h3>
 
-        {/* Description with High Contrast in Dark Mode */}
-        <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-200 leading-relaxed line-clamp-2">
+        {/* Description with Balanced High Contrast */}
+        <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
           {app.description}
         </p>
       </div>
 
       {/* Bottom Action Area: Centered Button with Unit-Dominant Color */}
-      <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center">
+      <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800/90 flex items-center justify-center">
         <a
           href={app.url}
           target="_blank"
           rel="noopener noreferrer"
-          className={`w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white shadow-sm active:scale-98 transition-all duration-200 group/btn ${styles.button}`}
+          className={`w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white shadow-sm active:scale-[0.98] transition-all duration-200 cursor-pointer outline-none group/btn ${styles.button}`}
         >
           <span>Masuk</span>
           <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />

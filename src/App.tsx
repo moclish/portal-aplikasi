@@ -73,9 +73,9 @@ export default function App() {
   }, [apps, selectedUnit]);
 
   return (
-    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      {/* Subtle soft blue ambient background light (clean, no image) */}
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-80 bg-sky-200/30 dark:bg-sky-900/15 blur-[100px] rounded-full -z-10" />
+    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 overflow-x-hidden">
+      {/* Subtle ambient light harmonizing MTs (emerald), MA (sky), and Pondok (violet) */}
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-80 bg-gradient-to-r from-emerald-200/25 via-sky-200/30 to-violet-200/25 dark:from-emerald-900/15 dark:via-sky-900/15 dark:to-violet-900/15 blur-[110px] rounded-full -z-10" />
 
       {/* Main Container with top padding to account for fixed navbar */}
       <div className="flex min-h-screen flex-col pt-14 sm:pt-16">
@@ -96,7 +96,7 @@ export default function App() {
           />
 
           {/* Apps Cards Container (Centered: 4 Desktop, 3 Laptop, 2 Tablet, 1 Mobile) */}
-          <section id="apps-section" className="my-8 scroll-mt-20 sm:scroll-mt-24">
+          <section id="apps-section" className="my-6 sm:my-8 scroll-mt-20 sm:scroll-mt-24">
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {filteredApps.map((app) => (
                 <div
@@ -110,11 +110,11 @@ export default function App() {
           </section>
 
           {/* User-Friendly Section Divider */}
-          <div className="relative my-12 sm:my-16 flex items-center justify-center">
+          <div className="relative my-10 sm:my-14 flex items-center justify-center">
             <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-slate-200/80 dark:border-slate-800/90 bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
+              <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-300/90 dark:via-slate-700/90 to-transparent" />
             </div>
-            <div className="relative px-4 bg-slate-50 dark:bg-slate-950">
+            <div className="relative px-4 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
                 <span>Panduan Penggunaan</span>

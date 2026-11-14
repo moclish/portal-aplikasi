@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Video, Grid, Menu, X } from 'lucide-react';
 import { BrandLogo } from './BrandLogo.tsx';
 import { ThemeToggle } from './ThemeToggle.tsx';
@@ -17,32 +17,77 @@ export const Navbar: React.FC<NavbarProps> = ({
   institutionName,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<'apps' | 'tutorials' | null>('apps');
+  const [activeSection, setActiveSection] = useState<'apps' | 'tutorials'>('apps');
+  const isManualScrollRef = useRef(false);
+  const scrollTimeoutRef = useRef<number | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
 
-  // Track scroll position to dynamically highlight current section
+  // Close mobile menu when tapping outside the header
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [mobileMenuOpen]);
+
+  // Track scroll position accurately using bounding rect + bottom-of-page check
   useEffect(() => {
     const handleScroll = () => {
+      if (isManualScrollRef.current) return;
+
       const headerEl = document.querySelector('header');
       const navHeight = headerEl ? headerEl.offsetHeight : 64;
-      const scrollPosition = (window.pageYOffset || document.documentElement.scrollTop) + navHeight + 30;
       const tutorialsEl = document.getElementById('tutorials');
-      const appsEl = document.getElementById('apps-section');
 
-      if (tutorialsEl && scrollPosition >= tutorialsEl.offsetTop) {
-        setActiveSection('tutorials');
-      } else if (appsEl && scrollPosition >= appsEl.offsetTop - 60) {
-        setActiveSection('apps');
-      } else {
-        setActiveSection('apps');
+      // Check if user reached near the bottom of the page
+      const isAtBottom =
+        window.innerHeight + (window.pageYOffset || document.documentElement.scrollTop) >=
+        document.documentElement.scrollHeight - 40;
+
+      if (tutorialsEl) {
+        const tutorialRect = tutorialsEl.getBoundingClientRect();
+        // Activate 'tutorials' when section top approaches viewport focus or user hits page bottom
+        if (isAtBottom || tutorialRect.top <= navHeight + 140) {
+          setActiveSection('tutorials');
+          return;
+        }
       }
+
+      setActiveSection('apps');
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
+    };
   }, []);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = (id: string, e?: React.MouseEvent<HTMLButtonElement>) => {
+    if (e) e.currentTarget.blur();
+
+    const targetTab: 'apps' | 'tutorials' = id === 'tutorials' ? 'tutorials' : 'apps';
+    setActiveSection(targetTab);
+
+    // Pause scroll-spy briefly while smooth scrolling so active highlight never flickers
+    isManualScrollRef.current = true;
+    if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      isManualScrollRef.current = false;
+    }, 650);
+
     const wasMobileMenuOpen = mobileMenuOpen;
     if (wasMobileMenuOpen) {
       setMobileMenuOpen(false);
@@ -52,16 +97,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       const el = document.getElementById(id);
       if (!el) return;
 
-      // Exact pixel height of fixed navbar
       const headerEl = document.querySelector('header');
-      const navHeight = headerEl ? headerEl.offsetHeight : (window.innerWidth < 640 ? 56 : 64);
+      const navHeight = headerEl ? headerEl.offsetHeight : window.innerWidth < 640 ? 56 : 64;
 
-      // Dedicated breathing room for mobile (12px), tablet (18px), and desktop (22px)
       const width = window.innerWidth;
       const breathingRoom = width < 640 ? 12 : width <= 1024 ? 18 : 22;
       const targetOffset = navHeight + breathingRoom;
 
-      // Calculate absolute document Y coordinate without relying on bodyRect
       const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
       const elementDocTop = el.getBoundingClientRect().top + currentScrollY;
       const targetScrollTop = Math.max(0, elementDocTop - targetOffset);
@@ -72,7 +114,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       });
     };
 
-    // On mobile, slight delay allows dropdown menu to close cleanly; on tablet and desktop, scroll executes immediately
     if (wasMobileMenuOpen) {
       setTimeout(performScroll, 50);
     } else {
@@ -83,11 +124,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   const scrollToHome = (e: React.MouseEvent) => {
     e.preventDefault();
     setMobileMenuOpen(false);
+    setActiveSection('apps');
+    isManualScrollRef.current = true;
+    if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      isManualScrollRef.current = false;
+    }, 650);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-all duration-300">
+    <header
+      ref={headerRef}
+      className="fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-all duration-300"
+    >
       <div className="mx-auto max-w-6xl xl:max-w-7xl px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2.5 sm:gap-4">
         {/* Brand Info (Left) - Clickable Link to Home */}
         <a
@@ -107,34 +157,42 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </a>
 
-        {/* Desktop Navigation Links (Center/Right) - With Dynamic Active Highlight */}
-        <nav className="hidden sm:flex items-center gap-1 bg-slate-100/90 dark:bg-slate-900 p-1 rounded-xl border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm font-semibold shrink-0">
+        {/* Desktop Navigation Links - Crisp & High-Contrast Active Highlight */}
+        <nav className="hidden sm:flex items-center gap-1 bg-slate-100/90 dark:bg-slate-900 p-1 rounded-xl border border-slate-200/90 dark:border-slate-800 text-xs sm:text-sm font-semibold shrink-0">
           <button
             type="button"
-            onClick={() => scrollToSection('apps-section')}
+            onClick={(e) => scrollToSection('apps-section', e)}
             title="Aplikasi"
             aria-label="Aplikasi"
-            className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all duration-200 cursor-pointer ${
+            className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg border transition-all duration-200 cursor-pointer outline-none ${
               activeSection === 'apps'
-                ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-xs border border-slate-200/90 dark:border-slate-700 font-bold'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60'
+                ? 'bg-sky-500 text-white border-sky-400 shadow-sm shadow-sky-500/25 font-bold'
+                : 'border-transparent text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/70 dark:hover:bg-slate-800/70'
             }`}
           >
-            <Grid className={`w-4 h-4 ${activeSection === 'apps' ? 'text-sky-600 dark:text-sky-400' : 'text-slate-500 dark:text-slate-400'}`} />
+            <Grid
+              className={`w-4 h-4 transition-colors ${
+                activeSection === 'apps' ? 'text-white' : 'text-slate-500 dark:text-slate-400'
+              }`}
+            />
             <span>Aplikasi</span>
           </button>
           <button
             type="button"
-            onClick={() => scrollToSection('tutorials')}
+            onClick={(e) => scrollToSection('tutorials', e)}
             title="Tutorial"
             aria-label="Tutorial"
-            className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all duration-200 cursor-pointer ${
+            className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg border transition-all duration-200 cursor-pointer outline-none ${
               activeSection === 'tutorials'
-                ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-xs border border-slate-200/90 dark:border-slate-700 font-bold'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60'
+                ? 'bg-sky-500 text-white border-sky-400 shadow-sm shadow-sky-500/25 font-bold'
+                : 'border-transparent text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/70 dark:hover:bg-slate-800/70'
             }`}
           >
-            <Video className={`w-4 h-4 ${activeSection === 'tutorials' ? 'text-sky-600 dark:text-sky-400' : 'text-slate-500 dark:text-slate-400'}`} />
+            <Video
+              className={`w-4 h-4 transition-colors ${
+                activeSection === 'tutorials' ? 'text-white' : 'text-slate-500 dark:text-slate-400'
+              }`}
+            />
             <span>Tutorial</span>
           </button>
         </nav>
@@ -146,9 +204,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Interactive Mobile Hamburger Button */}
           <button
             type="button"
-            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              setMobileMenuOpen((prev) => !prev);
+            }}
             aria-label={mobileMenuOpen ? 'Tutup Menu' : 'Buka Menu'}
-            className="sm:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors cursor-pointer"
+            className="sm:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors cursor-pointer outline-none"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -160,27 +221,35 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="sm:hidden border-t border-slate-200/80 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 backdrop-blur-md px-4 py-3 space-y-1.5 shadow-lg animate-in slide-in-from-top-2 duration-200">
           <button
             type="button"
-            onClick={() => scrollToSection('apps-section')}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+            onClick={(e) => scrollToSection('apps-section', e)}
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm border transition-colors cursor-pointer outline-none ${
               activeSection === 'apps'
-                ? 'bg-sky-50 dark:bg-slate-800 text-sky-600 dark:text-sky-400 font-bold border border-sky-100 dark:border-slate-700'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900'
+                ? 'bg-sky-500 text-white border-sky-400 font-bold shadow-sm shadow-sky-500/20'
+                : 'border-transparent font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900'
             }`}
           >
-            <Grid className="w-4 h-4 text-sky-500 dark:text-sky-400" />
+            <Grid
+              className={`w-4 h-4 ${
+                activeSection === 'apps' ? 'text-white' : 'text-sky-500 dark:text-sky-400'
+              }`}
+            />
             <span>Aplikasi</span>
           </button>
 
           <button
             type="button"
-            onClick={() => scrollToSection('tutorials')}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+            onClick={(e) => scrollToSection('tutorials', e)}
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm border transition-colors cursor-pointer outline-none ${
               activeSection === 'tutorials'
-                ? 'bg-sky-50 dark:bg-slate-800 text-sky-600 dark:text-sky-400 font-bold border border-sky-100 dark:border-slate-700'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900'
+                ? 'bg-sky-500 text-white border-sky-400 font-bold shadow-sm shadow-sky-500/20'
+                : 'border-transparent font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900'
             }`}
           >
-            <Video className="w-4 h-4 text-sky-500 dark:text-sky-400" />
+            <Video
+              className={`w-4 h-4 ${
+                activeSection === 'tutorials' ? 'text-white' : 'text-sky-500 dark:text-sky-400'
+              }`}
+            />
             <span>Tutorial</span>
           </button>
         </div>

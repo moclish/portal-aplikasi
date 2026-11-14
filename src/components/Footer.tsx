@@ -5,17 +5,17 @@ export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full text-xs text-slate-500 dark:text-slate-300">
+    <footer className="w-full text-xs text-slate-600 dark:text-slate-300">
       <div className="mx-auto max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Clean Divider Line between Tutorial and Footer */}
-        <div className="w-full border-t border-slate-200/90 dark:border-slate-800" />
+        {/* Clean Gradient Divider Line between Tutorial and Footer */}
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-300/90 dark:via-slate-800 to-transparent" />
 
         {/* Content Perfectly Centered Both Vertically and Horizontally */}
         <div className="py-6 sm:py-8 flex flex-col sm:flex-row items-center justify-center text-center gap-1.5 sm:gap-3">
           <span className="font-medium text-slate-700 dark:text-slate-300 leading-normal">
             Copyright &copy; {currentYear}.
           </span>
-          <span className="hidden sm:inline-flex items-center text-slate-300 dark:text-slate-600 select-none leading-none">
+          <span className="hidden sm:inline-flex items-center text-slate-400 dark:text-slate-600 select-none leading-none">
             •
           </span>
           <span className="inline-flex items-center justify-center gap-1.5 leading-normal">
@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
               href="https://instagram.com/sadonox"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-bold text-sky-600 dark:text-sky-300 hover:underline"
+              className="font-bold text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 hover:underline transition-colors"
             >
               Mo
             </a>

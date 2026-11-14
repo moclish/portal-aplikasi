@@ -63,23 +63,26 @@ export const TutorialSection: React.FC<TutorialSectionProps> = ({ tutorials }) =
         <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Tutorial Aplikasi
         </h3>
-        <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-200 leading-relaxed">
+        <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
           Panduan video penggunaan aplikasi
         </p>
 
-        {/* Tutorial Filter Tabs with Enhanced Dark Mode Contrast */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+        {/* Unified Segmented Tutorial Filter Tabs */}
+        <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-1 p-1 rounded-xl bg-slate-100/90 dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs">
           {filterOptions.map((option) => {
             const isSelected = selectedCategory === option;
             return (
               <button
                 key={option}
                 type="button"
-                onClick={() => setSelectedCategory(option)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border cursor-pointer ${
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                  setSelectedCategory(option);
+                }}
+                className={`px-3.5 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm border transition-all duration-200 cursor-pointer outline-none ${
                   isSelected
                     ? 'bg-sky-500 text-white font-bold border-sky-400 shadow-sm shadow-sky-500/25'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200/90 dark:border-slate-800 hover:border-sky-400 dark:hover:border-sky-500 hover:text-slate-900 dark:hover:text-white'
+                    : 'border-transparent font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/70 dark:hover:bg-slate-800/70'
                 }`}
               >
                 {option}
@@ -91,17 +94,17 @@ export const TutorialSection: React.FC<TutorialSectionProps> = ({ tutorials }) =
 
       {/* Grid of Solid High-Contrast Tutorial Cards or Empty State */}
       {filteredTutorials.length === 0 ? (
-        <div className="text-center py-12 px-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm">
-          <BookOpen className="w-10 h-10 text-slate-400 dark:text-slate-500 mx-auto mb-3 opacity-60" />
+        <div className="max-w-lg mx-auto text-center py-10 px-6 rounded-2xl bg-white dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-sm">
+          <BookOpen className="w-10 h-10 text-slate-400 dark:text-slate-500 mx-auto mb-3 opacity-70" />
           <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Belum ada video tutorial untuk kategori <span className="text-sky-500">{selectedCategory}</span>.
+            Belum ada video tutorial untuk kategori <span className="text-sky-600 dark:text-sky-400">{selectedCategory}</span>.
           </p>
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Pilih kategori lain atau klik "Semua" untuk melihat seluruh panduan.
+            Pilih kategori lain atau klik &ldquo;Semua&rdquo; untuk melihat seluruh panduan.
           </p>
         </div>
       ) : (
-        <div className="flex flex-wrap justify-center gap-5 sm:gap-6">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
           {filteredTutorials.map((item) => {
             const thumbnail = `https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`;
             const { classes: categoryClasses, Icon: CategoryIcon } = getCategoryBadgeStyle(item.category);
@@ -109,13 +112,16 @@ export const TutorialSection: React.FC<TutorialSectionProps> = ({ tutorials }) =
             return (
               <div
                 key={item.id}
-                className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md lg:max-w-none group flex flex-col justify-between rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/50 dark:shadow-md dark:shadow-black/40 hover:shadow-xl hover:shadow-sky-500/15 hover:border-sky-400 dark:hover:border-sky-500 transition-all duration-300 overflow-hidden"
+                className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.3333%-16px)] xl:w-[calc(25%-18px)] group flex flex-col justify-between rounded-2xl bg-white dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/50 dark:shadow-lg dark:shadow-black/35 hover:shadow-xl hover:shadow-sky-500/15 dark:hover:shadow-sky-950/30 hover:border-sky-400 dark:hover:border-sky-500 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden"
               >
                 {/* Thumbnail Container (Triggers Modal Pop-Up on Click) */}
                 <button
                   type="button"
-                  onClick={() => setModalVideo(item)}
-                  className="relative aspect-video w-full bg-slate-950 overflow-hidden border-b border-slate-100 dark:border-slate-800 block cursor-pointer group/thumb text-left"
+                  onClick={(e) => {
+                    e.currentTarget.blur();
+                    setModalVideo(item);
+                  }}
+                  className="relative aspect-video w-full bg-slate-950 overflow-hidden border-b border-slate-100 dark:border-slate-800 block cursor-pointer outline-none group/thumb text-left"
                   aria-label={`Buka video ${item.title}`}
                 >
                   <img
@@ -124,15 +130,15 @@ export const TutorialSection: React.FC<TutorialSectionProps> = ({ tutorials }) =
                     className="w-full h-full object-cover transition-transform duration-300 group-hover/thumb:scale-105"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-slate-950/30 group-hover/thumb:bg-slate-950/20 transition-colors flex items-center justify-center">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-lg group-hover/thumb:scale-110 transition-transform duration-200">
-                      <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-white ml-0.5" />
+                  <div className="absolute inset-0 bg-slate-950/25 group-hover/thumb:bg-slate-950/15 transition-colors flex items-center justify-center">
+                    <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-lg ring-2 ring-white/25 group-hover/thumb:scale-110 transition-transform duration-200">
+                      <Play className="w-5 h-5 fill-white ml-0.5" />
                     </div>
                   </div>
                 </button>
 
                 {/* Content Body */}
-                <div className="p-5 flex-1 flex flex-col justify-between">
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                   <div>
                     {/* Badge Category and Curriculum arranged with justify-between */}
                     <div className="flex items-center justify-between gap-2 mb-3">
@@ -159,8 +165,8 @@ export const TutorialSection: React.FC<TutorialSectionProps> = ({ tutorials }) =
                       {item.title}
                     </h4>
 
-                    {/* Description with High Contrast in Dark Mode */}
-                    <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-200 leading-relaxed">
+                    {/* Description with Balanced High Contrast */}
+                    <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                       {item.description}
                     </p>
 

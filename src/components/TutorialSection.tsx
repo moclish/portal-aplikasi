@@ -1,10 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Play, BookOpen, AlertCircle, X } from 'lucide-react';
+import { Play, BookOpen, AlertCircle, X, GraduationCap, Laptop, FileCheck } from 'lucide-react';
 import { TutorialItem } from '../types/index.ts';
 
 interface TutorialSectionProps {
   tutorials: TutorialItem[];
 }
+
+const getCategoryBadgeStyle = (category: TutorialItem['category']) => {
+  switch (category) {
+    case 'RDM':
+      return {
+        classes:
+          'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-700',
+        Icon: GraduationCap,
+      };
+    case 'E-Learning':
+      return {
+        classes:
+          'bg-sky-50 text-sky-800 border-sky-300 dark:bg-sky-950/80 dark:text-sky-200 dark:border-sky-700',
+        Icon: Laptop,
+      };
+    case 'CBT':
+      return {
+        classes:
+          'bg-purple-50 text-purple-800 border-purple-300 dark:bg-purple-950/80 dark:text-purple-200 dark:border-purple-700',
+        Icon: FileCheck,
+      };
+  }
+};
 
 export const TutorialSection: React.FC<TutorialSectionProps> = ({ tutorials }) => {
   // State for active video in popup modal
@@ -81,6 +104,7 @@ export const TutorialSection: React.FC<TutorialSectionProps> = ({ tutorials }) =
         <div className="flex flex-wrap justify-center gap-5 sm:gap-6">
           {filteredTutorials.map((item) => {
             const thumbnail = `https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`;
+            const { classes: categoryClasses, Icon: CategoryIcon } = getCategoryBadgeStyle(item.category);
 
             return (
               <div
@@ -114,21 +138,17 @@ export const TutorialSection: React.FC<TutorialSectionProps> = ({ tutorials }) =
                     <div className="flex items-center justify-between gap-2 mb-3">
                       {/* Distinct Badge for Each Category */}
                       <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border shrink-0 ${
-                          item.category === 'RDM'
-                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-700'
-                            : item.category === 'E-Learning'
-                            ? 'bg-sky-50 text-sky-800 border-sky-300 dark:bg-sky-950/80 dark:text-sky-200 dark:border-sky-700'
-                            : 'bg-purple-50 text-purple-800 border-purple-300 dark:bg-purple-950/80 dark:text-purple-200 dark:border-purple-700'
-                        }`}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border shrink-0 ${categoryClasses}`}
                       >
-                        <BookOpen className="w-3 h-3" />
+                        <CategoryIcon className="w-3 h-3" />
                         <span>{item.category}</span>
                       </span>
 
-                      {/* Curriculum Badge */}
+                      {/* Curriculum Badge sharing the same category color */}
                       {item.curriculum && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700 truncate max-w-[60%]">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border truncate max-w-[60%] ${categoryClasses}`}
+                        >
                           {item.curriculum}
                         </span>
                       )}

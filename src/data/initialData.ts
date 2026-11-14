@@ -89,6 +89,24 @@ export const INITIAL_TUTORIALS: TutorialItem[] = [
     youtubeId: '4ZErpnde3c0',
     youtubeUrl: 'https://www.youtube.com/watch?v=4ZErpnde3c0',
   },
+  {
+    id: 'tut-elearning',
+    title: 'Tutorial E-Learning Madrasah',
+    category: 'E-Learning',
+    curriculum: 'Kelas Digital',
+    description: 'Panduan login, akses bahan ajar digital, forum diskusi kelas, dan pengumpulan tugas mandiri.',
+    youtubeId: 'TDmexDm606A',
+    youtubeUrl: 'https://www.youtube.com/watch?v=TDmexDm606A',
+  },
+  // {
+  //   id: 'tut-cbt',
+  //   title: 'Tutorial Ujian Online CBT',
+  //   category: 'CBT',
+  //   curriculum: 'Ujian Online',
+  //   description: 'Panduan teknis pelaksanaan ujian CBT, input token ujian, menjawab soal, dan kirim jawaban.',
+  //   youtubeId: 'tjSaVeOv41A',
+  //   youtubeUrl: 'https://www.youtube.com/watch?v=tjSaVeOv41A',
+  // },
 ];
 
 export const DEFAULT_CONFIG: PortalConfig = {
